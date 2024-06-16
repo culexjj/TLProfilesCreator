@@ -13,13 +13,13 @@ import org.jsoup.nodes.Element;
 import checkNews.data.News;
 import checkNews.data.NewsHM;
 import checkNews.data.NewsType;
-import checkNews.support.CheckInternetConnection;
+//import checkNews.support.CheckInternetConnection;
 
 /**
  * Class for fetching News using RSS sources or standard google searches
  * requires org.jsoup en module-info.java  and  jsoup-1.16.1.jar.  Set on 'properties-java build path-libraries-module path'
  * @author Jose Javier Culebras
- * @version 0.9 (toDo: revisar el parsing de fuentes RSS)) 
+ * @version 1.0 
  * 
  */
 
@@ -89,12 +89,12 @@ public class InternetSearch {
 			documentHTML = Jsoup.connect(search).userAgent(listAgents[browserAgent]).get();//Fetching content from google
 		} catch (IOException e) {
 			
-			System.out.println("ERROR: error searching News");
+			System.out.println("WARNING: error searching news");
 			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
+			/*if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
 			
 				System.out.println ("ERROR: no internet connection");
-			}
+			}*/
 			 
 			return;
 		}
@@ -109,7 +109,6 @@ public class InternetSearch {
 
 	    numberOfNewsNew = NewsHM.getNumberOfElements();
 		System.out.println("INFO: " + (numberOfNewsNew-numberOfNews) + " news found" );
-	  
 	}
 	
 	
@@ -142,12 +141,12 @@ public class InternetSearch {
 			
 		} catch (IOException e) {
 			
-			System.out.println("ERROR: error searching news");
+			System.out.println("WARNING: error searching news");
 			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
+			/*if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
 				
 				System.out.println ("ERROR: no internet connection");
-			}
+			}*/
 			
 			return;
 		}
@@ -157,12 +156,12 @@ public class InternetSearch {
 			documentHTML = Jsoup.parse(inStream, "UTF-8", strURL); //Fetching content from the feed service and parse it with a specific charset
 		} catch (IOException e) {
 			
-			System.out.println("ERROR: error searching news");
+			System.out.println("WARNING: error searching news");
 			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
+			/*if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
 				
 				System.out.println ("ERROR: no internet connection");
-			}
+			}*/
 
 			return;
 		}
@@ -230,12 +229,12 @@ public class InternetSearch {
 			return;
 		} catch (IOException e) {
 			
-			System.out.println("ERROR: error searching news");
+			System.out.println("WARNING: error searching news");
 			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
+			/*if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
 				
 				System.out.println ("ERROR: no internet connection");
-			}
+			}*/
 			
 			return;
 		}
@@ -245,12 +244,12 @@ public class InternetSearch {
 			documentXML = Jsoup.parse(inStream, "UTF-8", strURL); //Fetching content from the feed service and parse it with a specific charset
 		} catch (IOException e) {
 			
-			System.out.println("ERROR: error searching news");
+			System.out.println("WARNING: error searching news");
 			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
+			/*if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
 				
 				System.out.println ("ERROR: no internet connection");
-			}
+			}*/
 			
 			return;
 		}

@@ -10,8 +10,7 @@
 
 package checkNews.telegram;
 
-//import checkNews.telegram.Client;
-//import checkNews.telegram.TdApi;
+
 
 import java.io.BufferedReader;
 import java.io.IOError;
@@ -25,19 +24,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-/* IMPORTS */
 import checkNews.telegram.TdApi.FoundChatMessages;
 import checkNews.telegram.TdApi.FoundMessages;
 import checkNews.telegram.TdApi.Message;
-		//import checkNews.telegram.TdApi.Messages;
+import checkNews.telegram.TdApi.MessageLink;
 import checkNews.telegram.TdApi.Chats;
 import checkNews.telegram.TdApi.Chat;
-		//import checkNews.telegram.TdApi.SearchChatMessages;
 import checkNews.telegram.TdApi.User;
-		//import checkNews.telegram.Telegram.OrderedChat;
-		
-		
+				
 
 /**
  * Example class for TDLib usage from Java.
@@ -78,7 +72,8 @@ public final class Telegram {
     private static Chats publicChats = new Chats();
     private static Chat chat = new Chat();
     private static User user = new User();
-    //private static String chatTitle = null;
+    private static MessageLink messageLink = new MessageLink(); 	
+   
     private static boolean control = false; //Inform when a reply from Telegram has been received
     private static boolean error = false; //Inform when a reply from Telegram ends with error		
     		 
@@ -119,7 +114,6 @@ public final class Telegram {
     		 }
     		    
     		    
-    		 
     	//SEARCH MESSAGES WHICH CONTAINS A SPECIFIC STRING ON JUST ONE CHAT//
             		 
     		 /**
@@ -131,7 +125,6 @@ public final class Telegram {
     		  */
     		public static void searchChatMessages(String query, String chat, int limit ) {    			
    		 		//If your code is executing in a multi-threaded environment, you need synchronization for objects, which are shared among multiple threads, to avoid any corruption of state or any kind of unexpected behavior.
-    			//chatMessages = new FoundChatMessages();
     			synchronized (chatMessages) {  
    		 			client.send(new TdApi.SearchChatMessages(getChatId(chat), query, null, 0, 0, limit, null, 0), defaultHandler);
    		 		}   	    	
@@ -240,8 +233,7 @@ public final class Telegram {
     	     * @param limit
     	     */
 			public static void getMainChatList(final int limit) {
-				
-				// send LoadChats request if there are some unknown chats and have not enough known chats
+				//send LoadChats request if there are some unknown chats and have not enough known chats
 				client.send(new TdApi.LoadChats(new TdApi.ChatListMain(), limit - mainChatList.size()), new Client.ResultHandler() { @Override
 					public void onResult(TdApi.Object object) {
 						}
@@ -372,6 +364,40 @@ public final class Telegram {
 	    	}
 			
 			
+			//GET MESSAGE LINK//
+			
+			/**
+			 * Method for getting the URL for opening a message on Telegram web
+			 * @param chatId
+			 * @param messageId
+			 */
+			public static void getMessageLink(long chatId, long messageId) {    			
+    		   	//If your code is executing in a multi-threaded environment, you need synchronization for objects, which are shared among multiple threads, to avoid any corruption of state or any kind of unexpected behavior.
+    		    synchronized (messageLink) {  
+    		   		 client.send(new TdApi.GetMessageLink(chatId, messageId,0, false, false), defaultHandler);
+    		   	}   	    	
+    		}
+    		
+			
+			/**
+			 * Method for getting the URL for opening a message
+			 * @return the URL
+			 */
+			public static String getLink() {
+				
+	    		return messageLink.link;
+	    	}
+			
+			
+			/**
+			 * * Method for set the value of the attribute messageLink
+			 */
+			public static void setLink() {
+				
+	    		messageLink.link = "";
+	    	}
+			
+			
 			//FINISH SESSION ON TELEGRAM//
     	        	    
     	    /**
@@ -408,28 +434,26 @@ public final class Telegram {
 	    	 }    
 
 	    	 
-	    	 
-	    	 
 	    	 /**
-	    	     * The variable error is used for informing when a  query ends with error
-	    	     * @return 
-	    	     */
-	    	    public static boolean getError() {
+	    	  * The variable error is used for informing when a  query ends with error
+	    	  * @return 
+	    	  */
+	    	 public static boolean getError() {
 	    	    	
-	    	    	return error;
-		    	}
+	    	  	return error;
+		     }
 		    	
 	    	    
-	    	    /**
-	    	     * Method for setting the value of variable error
-	    	     * @param value
-	    	     */
-		    	 public static void setError(boolean value) {
+	    	 /**
+	    	  * Method for setting the value of variable error
+	    	  * @param value
+	    	  */
+	    	 public static void setError(boolean value) {
 		    		 
-		    		 error = value;
-		    	 }    
+	    		 error = value;
+	    	 }    
 	    	 
-	    	 
+	    	/* 
     	    public static void searchAllChatMessagesTest(String query, int limit) {
        		   	//If your code is executing in a multi-threaded environment, you need synchronization for objects, which are shared among multiple threads, to avoid any corruption of state or any kind of unexpected behavior.
     	    	synchronized (allChatMessages) {  
@@ -444,8 +468,13 @@ public final class Telegram {
    		 			client.send(new TdApi.SearchChatMessages(chat, query, null, 0, 0, limit, null, 0), defaultHandler);
    		 		}   	    	
    		 	}
-    	    
-    	    
+    	    */
+    
+	    	 
+	/**
+	 * Original method modified    	 
+	 * @param str
+	 */
     private static void print(String str) {
     	
     	str = "TL: " + str.replaceAll("(\\r|\\n)", "");
@@ -783,6 +812,9 @@ public final class Telegram {
             	case TdApi.User.CONSTRUCTOR :
             		user = (User) object;
             		control = true;
+            	case TdApi.MessageLink.CONSTRUCTOR :
+            		messageLink = (MessageLink) object;
+            		control = true;	       		
         		default:
         			if (object.getConstructor() == -1679978726) {
         				print(object.toString());;

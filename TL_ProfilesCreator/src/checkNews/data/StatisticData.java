@@ -77,7 +77,7 @@ public class StatisticData {
 					day = date.getDay();
 				} catch (ParseException e) {
 		
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 		 
 				switch (day) {
@@ -127,7 +127,6 @@ public class StatisticData {
 		} catch (NullPointerException e) {
 		
 			System.out.println("WARNING: no messages found");
-		
 		}
 		
 		return days;
@@ -166,7 +165,7 @@ public class StatisticData {
 					hour = date.getHours();
 				} catch (ParseException e) {
 		
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 		 
 				switch (hour) {
@@ -364,11 +363,9 @@ public class StatisticData {
 		} catch (NullPointerException e) {
 			
 			System.out.println("WARNING: no messages found");
-			
 		}
 		
 		int[] totalMessageType = {textMessages, pictureMessages, videoMessages, othersMessages};
-		
 		return totalMessageType;
 	}
 	
@@ -381,7 +378,6 @@ public class StatisticData {
 		
 		int internetNews = 0;
 		int rssNews = 0;
-		
 		
 		ArrayList<News> listOfNews = new ArrayList<News>();
 		News aNew = new News();
@@ -420,11 +416,9 @@ public class StatisticData {
 		} catch (NullPointerException e) {
 			
 			System.out.println("WARNING: no news found");
-			
 		}
 		
 		int[] totalNewsType = {internetNews, rssNews};
-		
 		return totalNewsType;
 	}
 	

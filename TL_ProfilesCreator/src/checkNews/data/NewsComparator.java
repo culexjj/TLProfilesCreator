@@ -29,14 +29,14 @@ public class NewsComparator implements java.util.Comparator<News>{
 			
 			date1 = dateFormat.parse(a.getDate());
 		} catch (ParseException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		try {
 			
 			date2 = dateFormat.parse(b.getDate());
 		} catch (ParseException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return date2.compareTo(date1);

@@ -62,7 +62,6 @@ public class MessageTelegramHM {
 	public static int getNumberOfElements() {
 		
 		return hashMapMessages.size();
-		
 	}
 	
 	/**
@@ -97,26 +96,24 @@ public class MessageTelegramHM {
 		        
 		        String content = messageTelegramRec.getContent().toLowerCase();
 		       
-		        for (String item : itemsQuery) {
+		        for (String item : itemsQuery){
 					
-		        	if (content.contains(item)) {
+		        	if (content.contains(item)){
 						
 		        		founds--; //Each time we have a match
 		        	}
 		        
-		        if (founds == 0) {//All words match with the filter, so we add the message
-					
-		        	listOfMessages.add(messageTelegramRec);
+			        if (founds == 0) {//All words match with the filter, so we add the message
+						
+			        	listOfMessages.add(messageTelegramRec);
 					}
-				}
-		          
+		        }
 		    }
 		} catch (NullPointerException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		Collections.sort(listOfMessages, new MessageTelegramComparator());
-		
 		return listOfMessages;
 	}
 	
@@ -147,8 +144,6 @@ public class MessageTelegramHM {
 		}
 		
 		Collections.sort(listOfMessages, new MessageTelegramComparator());
-		
-		
 		return listOfMessages;
 	}
 	
@@ -186,9 +181,9 @@ public class MessageTelegramHM {
 		        		founds--; //Each time we have a match
 		        	}
 		        
-		        if (founds == 0) {//All words match with the filter, so we add the message
+		        	if (founds == 0) {//All words match with the filter, so we add the message
 					
-		        	listOfMessages.add(messageTelegramRecord);
+		        		listOfMessages.add(messageTelegramRecord);
 					}
 				}		        
 		    }
@@ -198,7 +193,6 @@ public class MessageTelegramHM {
 		}
 		
 		Collections.sort(listOfMessages, new MessageTelegramComparator());
-		
 		return listOfMessages;
 	}
 	
@@ -230,11 +224,10 @@ public class MessageTelegramHM {
 		    }		    
 		} catch (NullPointerException e) {
 			
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		Collections.sort(listOfMessages, new MessageTelegramComparator());
-		
 		return listOfMessages;	
 	}
 

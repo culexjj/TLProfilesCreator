@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-//import java.sql.Timestamp;
 import java.util.ArrayList;
-
 import checkNews.data.ChatTelegram;
 import checkNews.data.ChatTelegramHM;
 import checkNews.search.InternetSearch;
+import checkNews.support.CheckInternetConnection;
 import checkNews.support.IOManager;
 import checkNews.telegram.QueryManager;
 
@@ -18,6 +17,7 @@ import checkNews.telegram.QueryManager;
  * @author Jose Javier Culebras
  * @version 1.0
  */ 
+
 public class BatchMode {
 	
 	/*--------------------------*/
@@ -68,9 +68,9 @@ public class BatchMode {
 		System.out.println("	-SRSS \"url RSS\" \"output file\", fetch news from a RSS service.");
 		System.out.println("	-SRSSL \"RSS input file\" \"output file\", read RSS sources from a file and fetch news from a RSS service.");
 		System.out.println("	-SM \"text string\" \"chad_id\" \"output file\", fetch messages from the specific \"chat id \" on Telegram.");
-		System.out.println("	-SML \"input file\" \"output file\" , read News from a file and fetch messages from all chats the user belongs.");
-		System.out.println("	-SAM \"text string\" \"output file\", fetch messages from all user chats on Telegram.");
-		System.out.println("	-SAML \"input file\" \"output file\", read News from a file and fetch Messages from all user chats on Telegram.");
+		System.out.println("	-SML \"input file\" \"output file\" , read News from a file and fetch messages from every chat the user belongs (till 100 messages for each chat).");
+		System.out.println("	-SAM \"text string\" \"output file\", fetch messages from all user chats on Telegram  (till 100 messages).");
+		System.out.println("	-SAML \"input file\" \"output file\", read News from a file and fetch Messages from all user chats on Telegram (till 100 messages).");
 		System.out.println("EXAMPLES:");
 		System.out.println("	-SI \"madrid breaking news\" \"c:\\temp\\news_madrid.json\"");
 		System.out.println("	-SIL \"c:\\temp\\source.txt\" \"c:\\temp\\outputFile.json\"");
@@ -87,9 +87,9 @@ public class BatchMode {
 	 */
 	public static void searchInternetNews(InternetSearch internetSearch, IOManager ioManager, String query, String path ) {
 		
+		if (checkConnection() == false ) return; //Check Connection to the internet
 		internetSearch.searchNewsByTitle(query);
 		ioManager.writeNewsJsonFile(path);
-		
 	}
 	
 	
@@ -102,9 +102,7 @@ public class BatchMode {
 	 */
 	public static void searchMessagesList(QueryManager queryManager, IOManager ioManager, String sourcePath, String path ) {
 		
-		//Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
-		//int counter = 0;
-	    
+		if (checkConnection() == false ) return; //Check Connection to the internet
 		ArrayList<String> queryList = new ArrayList<String>();
 		queryList = readSourcePath(sourcePath);
 		
@@ -125,22 +123,12 @@ public class BatchMode {
 				for(ChatTelegram chat : chatList) { //look for on all chats the user belongs
 					
 					Long chatId = chat.getChatId();
-					queryManager.searchChatMessages(query, chatId.toString());
-					//counter++;
-					
+					queryManager.searchChatMessages(query, chatId.toString());	
 				}
-				
 			}
-			
 		}
-		
-		//Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
-		
+			
 		ioManager.writeMessageTelegramJsonFile(path);
-		
-		 //System.out.println("Inicio de ejecución : " + timestamp1);  
-		 //System.out.println("Fin de ejecución : " + timestamp2); 
-		 //System.out.println("Numero de busquedas realizadas : " + counter); 
 	}
 	
 	
@@ -153,6 +141,7 @@ public class BatchMode {
 	 */
 	public static void searchInternetNewsList(InternetSearch internetSearch, IOManager ioManager, String sourcePath, String path ) {
 		
+		if (checkConnection() == false ) return; //Check Connection to the internet
 		ArrayList<String> queryList = new ArrayList<String>();
 		queryList = readSourcePath(sourcePath);
 		
@@ -174,7 +163,6 @@ public class BatchMode {
 	}
 	
 	
-	
 	/**
 	 * Method for fetching News from a RSS source. Used on batch mode
 	 * @param internetSearch
@@ -184,9 +172,9 @@ public class BatchMode {
 	 */
 	public static void searchInternetNewsRSS(InternetSearch internetSearch, IOManager ioManager, String query, String path ) {
 		
+		if (checkConnection() == false ) return; //Check Connection to the internet
 		internetSearch.searchNewsByRSS(query);
 		ioManager.writeNewsJsonFile(path);
-		
 	}
 	
 	
@@ -197,10 +185,11 @@ public class BatchMode {
 	 * @param queryManager
 	 * @param ioManager
 	 * @param sourcePath (the list of News to look for)
-	 * @param path
+	 * @param path 
 	 */
 	public static void searchAllMessagesList(QueryManager queryManager, IOManager ioManager, String sourcePath, String path ) {
 		
+		if (checkConnection() == false ) return; //Check Connection to the internet
 		ArrayList<String> queryList = new ArrayList<String>();
 		queryList = readSourcePath(sourcePath);
 		
@@ -232,6 +221,7 @@ public class BatchMode {
 	 */
 	public static void searchInternetNewsRSSList(InternetSearch internetSearch, IOManager ioManager, String sourcePath, String path ) {
 		
+		if (checkConnection() == false ) return; //Check Connection to the internet
 		ArrayList<String> queryList = new ArrayList<String>();
 		queryList = readSourcePath(sourcePath);
 		
@@ -266,6 +256,7 @@ public class BatchMode {
 	 */
 	public static void searchMessages(QueryManager queryManager, IOManager ioManager, String query, String chat, String path ) {
 		
+		if (checkConnection() == false ) return; //Check Connection to the internet
 		queryManager.searchChatMessages(query, chat);		
 		ioManager.writeMessageTelegramJsonFile(path);
 	}
@@ -282,9 +273,9 @@ public class BatchMode {
 	 */
 	public static void searchAllMessages(QueryManager queryManager, IOManager ioManager, String query, String path ) {
 		
+		if (checkConnection() == false ) return; //Check Connection to the internet
 		queryManager.searchAllChatMessages(query);		
 		ioManager.writeMessageTelegramJsonFile(path);
-		
 	}
 	
 	
@@ -295,6 +286,7 @@ public class BatchMode {
 	 */
 	private static ArrayList<String> readSourcePath(String sourcePath) {
 		
+		//if (checkConnection() == false ) return; //Check Connection to the internet
 		ArrayList<String> queryList  = new ArrayList<String>();
 		
 		try {
@@ -318,6 +310,21 @@ public class BatchMode {
 		}
 				
 		return queryList;
+	}
+	
+	
+	/**
+	 * Method for checking the connection to internet
+	 * @return the status of the connection
+	 */
+	private static boolean checkConnection(){
+		
+		if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
+			System.out.println ("ERROR: no internet connection");
+			return false;
+		} else {
+			return true;
+		}
 	}
 		
 }

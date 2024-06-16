@@ -12,7 +12,7 @@ import java.util.Collections;
 /**
  * Class for keeping and  Managing a HashMap of NEWS 
  * @author Jose Javier Culebras
- * @version 0.9 
+ * @version 1.0 
  */
 public class NewsHM {
 	
@@ -67,8 +67,7 @@ public class NewsHM {
 	 */
 	public static int getNumberOfElements() {
 		
-		return hashMapNews.size();
-		
+		return hashMapNews.size();	
 	}
 	
 	
@@ -98,7 +97,6 @@ public class NewsHM {
 		}
 		
 		Collections.sort(listOfNews, new NewsComparator());
-		
 		return listOfNews;
 	}
 	
@@ -134,7 +132,7 @@ public class NewsHM {
 		        	if (title.contains(item)) { //Each time we have a match
 		        		
 		        		founds--; //update counter
-		        }
+		        	}
 		        
 		        	if (founds == 0) { //success, all words found
 		        	
@@ -148,7 +146,6 @@ public class NewsHM {
 		}
 		
 		Collections.sort(listOfNews, new NewsComparator());
-		
 		return listOfNews;
 	}
 	

@@ -55,7 +55,6 @@ public class ChatTelegramHM {
 	public static int getNumberOfElements() {
 		
 		return hashMapChats.size();
-		
 	}
 	
 	
@@ -110,7 +109,6 @@ public class ChatTelegramHM {
 		}
 		
 		Collections.sort(listOfChats, new ChatTelegramComparator());
-		
 		return listOfChats;
 	}
 	

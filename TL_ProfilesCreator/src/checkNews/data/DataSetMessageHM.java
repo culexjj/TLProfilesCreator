@@ -57,7 +57,6 @@ public class DataSetMessageHM {
 	public static int getNumberOfElements() {
 		
 		return hashMapDataSet.size();
-		
 	}
 	
 	/**
@@ -132,7 +131,6 @@ public class DataSetMessageHM {
 		}
 				
 		return listOfDataSetMessage;
-		
 	}
 	
 }

@@ -1,17 +1,16 @@
  package checkNews.gui;
 
 
-
-
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.IOException;
+//import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -48,7 +47,6 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-
 import checkNews.data.ChatTelegram;
 import checkNews.data.ChatTelegramHM;
 import checkNews.data.DataSetMessage;
@@ -65,8 +63,7 @@ import checkNews.support.IOManager;
 import checkNews.support.gui.BarChart;
 import checkNews.support.gui.HeaderTable;
 import checkNews.support.gui.LineChart;
-import checkNews.support.OpenBrowser;
-import checkNews.support.OpenTelegramDesktop;
+//import checkNews.support.OpenBrowser;
 import checkNews.support.gui.PieChart;
 import checkNews.support.gui.SetOutputStream;
 
@@ -134,12 +131,14 @@ public class View {
 		String columnDataSetB[]={"TYPE","MESSAGE","SENDERID","NAME","ATTRIBUTES"};
 		
 		String[] newsColumnTips = { "Click a header to sort data", "Use the right button for searching messages","Just News from RSS sources have a description"};
-		String[] messagesColumnTips = { "Click a header to sort data", "Use the right button for create a USER dataset",null,null,"Use the right button for create a MESSAGE dataset",null};
-		String[] chatsColumnTips = { "Click a header to sort data", "Use the right button for for joining",null};
+		String[] messagesColumnTips = { "Click a header to sort data", "Use the right button for create a USER dataset",null,"Use the right button for opening the MESSAGE","Use the right button for create a MESSAGE dataset",null};
+		String[] chatsColumnTips = { "Click a header to sort data", "Use the right button for joining",null};
 		String[] dataSetAColumnTips = { null, null,null,"Account attributes: Fake, Scam, Verified, Premium",null,null,null};
 		String[] dataSetBColumnTips = { null, null,null,null,"Account attributes: Fake, Scam, Verified, Premium"};
 		
-		/* NEWS Table definion. */		
+		
+		/* NEWS Table definion. */	
+		
 		modelNews = new DefaultTableModel(tableData,columnNews) { 
 			@Override
 			public boolean isCellEditable(int row, int column) { return false; }
@@ -200,7 +199,8 @@ public class View {
         scrollNews = new JScrollPane(jTableNews);
         
        	
-        /* MESSAGE TELEGRAM Table definion */	
+        /* MESSAGE TELEGRAM Table definion */
+        
 		modelMessageTelegram = new DefaultTableModel(tableData,columnMessagesTelegram) { 
 			@Override
 			public boolean isCellEditable(int row, int column) { return false; }
@@ -229,7 +229,6 @@ public class View {
             }};
         }};
         
-        
         jTableMessageTelegram.addMouseListener(new MouseListener());
      
         /* Right button options MESSAGE TELEGRAM table */
@@ -257,10 +256,12 @@ public class View {
 		jTableMessageTelegram.getColumnModel().getColumn(3).setPreferredWidth(120);
 		jTableMessageTelegram.getColumnModel().getColumn(4).setMinWidth(180);
 		jTableMessageTelegram.getColumnModel().getColumn(5).setMinWidth(1200);
-		jTableMessageTelegram.getColumnModel().getColumn(0).setHeaderRenderer(new HeaderTable(SwingConstants.LEFT)); //Header label
+		jTableMessageTelegram.getColumnModel().getColumn(0).setHeaderRenderer(new HeaderTable(SwingConstants.LEFT)); //Header label position LEFT
 		scrollMessageTelegram = new JScrollPane(jTableMessageTelegram);
 		
+		
 		/* CHAT TELEGRAM Table definion */
+		
 		modelChatTelegram = new DefaultTableModel(tableData,columnChatsTelegram) { 
 			@Override
 			public boolean isCellEditable(int row, int column) { return false; }
@@ -311,15 +312,14 @@ public class View {
 		jTableChatTelegram.setRowSorter(new TableRowSorter<DefaultTableModel>(modelChatTelegram)); //Sorter
 		jTableChatTelegram.getColumnModel().getColumn(0).setHeaderRenderer(new HeaderTable(SwingConstants.LEFT)); //Header label position LEFT
 		scrollChatTelegram = new JScrollPane(jTableChatTelegram);
-					
+		
+		
 		/* DATASET A (USER) Table definion */
+		
 		modelDataSetA = new DefaultTableModel(tableData,columnDataSetA) { 
 			@Override
 			public boolean isCellEditable(int row, int column) { return false; }
 		};
-		
-		
-		
 		
 		jTableDataSetA = new JTable(modelDataSetA) {
 			
@@ -347,7 +347,9 @@ public class View {
 		jTableDataSetA.getColumnModel().getColumn(0).setHeaderRenderer(new HeaderTable(SwingConstants.LEFT)); //Header label position LEFT
 		scrollDataSetA = new JScrollPane(jTableDataSetA);
 		
+		
 		/* DATASET B (MESSAGE) Table definion */
+		
 		modelDataSetB = new DefaultTableModel(tableData,columnDataSetB){ 
 			@Override
 			public boolean isCellEditable(int row, int column) { return false; }
@@ -591,8 +593,8 @@ public class View {
 			System.out.println(e.getMessage());
 		}
 
-		SwingUtilities.updateComponentTreeUI(frame);
-		
+		SwingUtilities.updateComponentTreeUI(frame);		
+		startConsoleOutput();		
 		frame.setVisible(true);
 	}
 	
@@ -617,7 +619,7 @@ public class View {
         frameOutputConsole.add(new JScrollPane(textArea));
         frameOutputConsole.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameOutputConsole.setSize(480, 320);
-        frameOutputConsole.setLocationByPlatform(true);
+        frameOutputConsole.setLocation(0, Toolkit.getDefaultToolkit().getScreenSize().height - 400);
         frameOutputConsole.setAlwaysOnTop(true);
         frameOutputConsole.setVisible(true);
 	}
@@ -633,7 +635,8 @@ public class View {
 		String[] columnsName = {"News", "Messages", "Chats", "User dataset", "Message dataset"}; 
 		
 		if ((figures[0] == 0) && (figures[1] == 0) && (figures[2] == 0) && (figures[3] == 0) && (figures[4] == 0)) {
-			JOptionPane.showMessageDialog(null, "No data available");
+			
+			System.out.println("INFO: no data available" );
 			return;
 		}
 
@@ -651,7 +654,8 @@ public class View {
 		String[] names = {"Text", "Picture", "Video", "Others"}; 
 		
 		if ((figures[0] == 0) && (figures[1] == 0) && (figures[2] == 0) && (figures[3] == 0)) {
-			JOptionPane.showMessageDialog(null, "No data available");
+	
+			System.out.println("INFO: no data available" );
 			return;
 		} 
 
@@ -669,7 +673,8 @@ public class View {
 		String[] names = {"Internet", "RSS"}; 
 		
 		if ((figures[0] == 0) && (figures[1] == 0)) {
-			JOptionPane.showMessageDialog(null, "No data available");
+			
+			System.out.println("INFO: no data available" );
 			return;
 		} 
 
@@ -687,7 +692,8 @@ public class View {
 		String[] columnsName = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}; 
 		
 		if ((figures[0] == 0) && (figures[1] == 0) && (figures[2] == 0) && (figures[3] == 0) && (figures[4] == 0) && (figures[5] == 0)&& (figures[6] == 0)) {
-			JOptionPane.showMessageDialog(null, "No data available");
+			
+			System.out.println("INFO: no data available" );
 			return;
 		}
 
@@ -716,12 +722,14 @@ public class View {
 		}
 		
 		if (control) {
-			JOptionPane.showMessageDialog(null, "No data available");
+			
+			System.out.println("INFO: no data available" );
 			return;
 		} 
 
 		new LineChart("Messages by Hour", "TL-ProfilesCreator (Messages by hour)", figures, "Hour", "Messages", "Messages by hour", 0, 23);
 	}
+	
 	
 	/**
 	 * Method for showing the help window
@@ -738,7 +746,6 @@ public class View {
         textArea.append("Contact: jculebras3@alumno.uned.es\r\n");
         textArea.append("\r\nThe java classes derived from TDLib https://github.com/tdlib/  are under Boost Software License - Version 1.0 - August 17th, 2003");
         textArea.append("\r\nhttps://www.boost.org/LICENSE_1_0.txt");
-        
         
         frameHelp.add(new JScrollPane(textArea));        
         frameHelp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -802,7 +809,7 @@ public class View {
         frameChats.add(new JScrollPane(textArea));
         frameChats.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameChats.setSize(750, 240);
-        frameChats.setLocationByPlatform(true);//setLocationRelativeTo(internet);
+        frameChats.setLocationByPlatform(true);
         frameChats.setVisible(true);
 	}
 	
@@ -819,12 +826,11 @@ public class View {
 	}
 	
 	
-	
 	/**
-	 * Method for getting two input value
-	 * @param firstText
-	 * @param secondText
-	 * @return The two values
+	 * Method for getting two input values
+	 * @param firstText 'the text to show on the first input dialog'
+	 * @param secondText 'the text to show on the second input dialog'
+	 * @return The two values of the user reply
 	 */
 	String[] inputTwoParameter (String firstText, String secondText) {
 		
@@ -936,7 +942,7 @@ public class View {
 		}
 				
 		  	
-        if (columnName.equals("CHATID (NAME)")) {
+        if (columnName.equals("CHATID (NAME)") || columnName.equals("MESSAGEID") ) {
         			
         	values[0] = "."; values[1] = "."; values[2] = ".";
 	        rightButtonValue = ""; //Set value to "" for next action
@@ -952,7 +958,7 @@ public class View {
 	    } else {
         		
 	        try {
-        			
+	        	
 	        	MessageTelegram message = MessageTelegramHM.getMessageTelegram(Long.valueOf(rightButtonValue).longValue());
 	        	String url = message.getSource(); 
 	        	fileName = url;
@@ -1003,7 +1009,7 @@ public class View {
 
 	
 	/**
-	 * Method for creating  a dataSet using the mouse right button
+	 * Method for creating  a dataSet
 	 * A file name is proposal (the senderId for Type A USER or a normalized name for Type B MESSAGE) 
 	 * @return fileName, filePath, type of dataset
 	 */
@@ -1033,8 +1039,6 @@ public class View {
         
         panel.add(typeA);
         panel.add(typeB);
-        
-       
         
         int result = JOptionPane.showConfirmDialog(null, panel, "Input", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
@@ -1168,6 +1172,7 @@ public class View {
 		sorter.setRowFilter (RowFilter.regexFilter(filterChats));
 		jTableChatTelegram.setRowSorter (sorter);
 	}
+	
 	
 	/**
 	 * Method for getting the value of rightButton
@@ -1308,7 +1313,7 @@ public class View {
 	/**
 	 * Method for opening a browser  a file of Messages. The value of variable rightButtonValue is used for setting the url
 	 */
-	void openBrowser() {
+	/*void openBrowserOld() {
 			
 		if (NewsMultipleRowSeleccion.size() <=1) {
 			
@@ -1317,7 +1322,7 @@ public class View {
 				OpenBrowser.openBrowser(rightButtonValue);
 			} catch (IOException e) {
 				
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			
 			rightButtonValue = ""; //Set value to "" for next action
@@ -1330,12 +1335,35 @@ public class View {
 					OpenBrowser.openBrowser(query);
 				} catch (IOException e) {
 					
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}	
 			
 			NewsMultipleRowSeleccion = new ArrayList<String>(); //clear array for next action
 			rightButtonValue = ""; //Set value to "" for next action			
+		}
+	}*/
+	
+	
+	ArrayList<String> openBrowser() {
+		
+		ArrayList<String> newsRowSeleccion = new ArrayList<String>();
+		
+		if (NewsMultipleRowSeleccion.size() <=1) {
+		
+			newsRowSeleccion.add(rightButtonValue);
+			rightButtonValue = ""; //Set value to "" for next action
+			return newsRowSeleccion; 
+		} else {
+			
+			for (String query : NewsMultipleRowSeleccion) {
+		        
+				newsRowSeleccion.add(query);
+			}	
+			
+			NewsMultipleRowSeleccion = new ArrayList<String>(); //clear array for next action
+			rightButtonValue = ""; //Set value to "" for next action
+			return newsRowSeleccion; 
 		}
 	}
 	
@@ -1343,26 +1371,20 @@ public class View {
 	/**
 	 * Method for opening  TelegramWeb
 	 */
-	void openTelegramWeb() {
+	String[] openTelegramWeb() {
+				
+		String[] itemLines = {"",""};
 		
-		if (!(columnName.equals("CHATID (NAME)"))) {
+		if (!(columnName.equals("MESSAGEID"))) {
     		
     		rightButtonValue = ""; //Set value to "" for next action
-			JOptionPane.showMessageDialog(null, "The source should be a CHATID (NAME) value!");
-			return;        		
+			JOptionPane.showMessageDialog(null, "The source should be a MESSAGEID value!");
+			return itemLines;        		
     	}
 		
-		String[] itemLines = rightButtonValue.split(" ");
-		
-		try {
-			OpenTelegramDesktop.openTelegramDesktop(itemLines[0].substring(4));
-			
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-		
-		rightButtonValue = ""; //Set value to "" for next action	
+		itemLines = rightButtonValue.split(" ");		
+		rightButtonValue = ""; //Set value to "" for next action
+		return itemLines;
 	}
 	
 	
@@ -1431,8 +1453,7 @@ public class View {
 		 			
 				if (chatId.equals(chatTelegram.getChatId())) {
 					chatName = chatTelegram.getChatName();
-					break;
-		 				
+					break;	
 				} 
 			}
 		 		
@@ -1503,7 +1524,6 @@ public class View {
 				
 				int input = JOptionPane.showConfirmDialog(null, "A file with this name already exist, Do you want to overwrite it?","Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 			    
-				
 				if (input == 0) { //If Yes, overwrite
 					
 					filePath = selectedFile.getAbsolutePath();
@@ -1705,20 +1725,23 @@ public class View {
 
 			if (columnName.equals("NAME") || columnName.equals("URL") || columnName.equals("DESCRIPTION") ) {
 				
-				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 1); //set to 1 on News Table
+				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 1); //set to 1 on News Table. We need the URL
 			} else if (columnName.equals("SENDERID")) {
 				
-				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 1); //set to 1 on MessagesTelegram Table
+				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 1); //set to 1 on MessagesTelegram Table. We need the senderId
 			} else if (columnName.equals("URL / KEYWORD")) {
 				
-				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 3); //set to 3 on MessagesTelegram Table
+				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 3); //set to 3 on MessagesTelegram Table. We need the messageId
+							
+			} else if (columnName.equals("MESSAGEID")) {
 				
-			} else if (columnName.equals("CHATID (NAME)")) {
-				
-				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 2); //set to 2
+				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 2); //set to 2. We need the chatId				
+				String[] itemLines = rightButtonValue.split(" ");				
+				rightButtonValue =  itemLines[0] + " " + (String) model.getValueAt(table.convertRowIndexToModel(row), 3); //set to 3. We need the messageId
+			
 			} else if (columnName.equals("STATUS") || columnName.equals("CHATID") || columnName.equals("CHAT NAME")) {
 				
-				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 1); //set to 1
+				rightButtonValue = (String) model.getValueAt(table.convertRowIndexToModel(row), 1); //set to 1. We need the chatId
 			} else {
 				
 				rightButtonValue = "."; //This value is used in the case the right button popup menu is done in the wrong column
@@ -1790,7 +1813,7 @@ public class View {
 	
 	/**
 	 * SharedListSelectionHandler class
-	 * Class for allowing multiple selecction row on a Jtable
+	 * Class for allowing multiple selection row on a Jtable
 	 */
 	class SharedListSelectionHandler implements ListSelectionListener {
 		

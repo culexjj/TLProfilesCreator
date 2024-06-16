@@ -1,15 +1,18 @@
 package checkNews.gui;
 
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.SwingWorker;
 import java.awt.event.ActionEvent;
-
 import checkNews.data.ChatTelegramHM;
 import checkNews.data.MessageTelegramHM;
 import checkNews.data.NewsHM;
 import checkNews.search.InternetSearch;
+import checkNews.support.CheckInternetConnection;
 import checkNews.support.IOManager;
+import checkNews.support.OpenBrowser;
+import checkNews.support.OpenTelegramDesktop;
 import checkNews.telegram.QueryManager;
 
 
@@ -19,6 +22,7 @@ import checkNews.telegram.QueryManager;
  * @version 1.0
  * 
  */ 
+
 public class Controller implements ActionListener {
 	
 	/*--------------------------*/
@@ -29,7 +33,6 @@ public class Controller implements ActionListener {
 	private IOManager ioManager;
 	private InternetSearch internetSearch;	
 	private View view;
-	
 	
 	
 	/*--------------------------*/
@@ -54,296 +57,224 @@ public class Controller implements ActionListener {
 		String inputForm = ""; //Parameter number 1 for querying the model
 		String rightButtonValue = "";
 		
-		if ( evento.getActionCommand().equals("DELETENEWS") ) {
-			
-			int value = view.askConfirmation("This operation can't be undone. Do you want to continue?","WARNING");
-			
-			if (value == 0) { //If Yes, overwrite
-				
+		if ( evento.getActionCommand().equals("DELETENEWS") ) {			
+			int value = view.askConfirmation("This operation can't be undone. Do you want to continue?","WARNING");			
+			if (value == 0) { //If Yes, overwrite				
 				view.deleteAllNews();
 				NewsHM.clearHM();
 			} else {
-
 				return;
 			}
-		} else if ( evento.getActionCommand().equals("SHOWNEWS") ) {
-			
+		} else if ( evento.getActionCommand().equals("SHOWNEWS") ) {			
 			view.showNews();
-		} else if ( evento.getActionCommand().equals("SHOWNEWSFILTER") ) {
-			
+		} else if ( evento.getActionCommand().equals("SHOWNEWSFILTER") ) {			
 			view.showNewsFilter();
 		} else if ( evento.getActionCommand().equals("SEARCHNEWS") ) {
-			
-			inputForm = view.inputOneParameter("Search String");
-	
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			inputForm = view.inputOneParameter("Search String");	
 			if (inputForm == null || inputForm.equals("")) {
-		
 				return; //if user cancel or close the dialog box, return
 			}
-	
 			getNews(inputForm);
 			view.updateModelNews();
 		} else if ( evento.getActionCommand().equals("SEARCHNEWSRSS") ) {
-			
-			inputForm = view.inputOneParameter("RSS");
-			
-			if (inputForm == null || inputForm.equals("")) {
-		
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			inputForm = view.inputOneParameter("RSS");			
+			if (inputForm == null || inputForm.equals("")) {		
 				return; //if user cancel or close the dialog box, return
-			}
-	
+			}	
 			getNewsRSS(inputForm);
 			view.updateModelNews();
-		} else if ( evento.getActionCommand().equals("SEARCHNEWSRSSFILTER") ) {
-			
-			String[] values = view.inputTwoParameter("RSS","Filter");
-			
-			if (values[0].equals("cancelByUser")) {
-	    		
+		} else if ( evento.getActionCommand().equals("SEARCHNEWSRSSFILTER") ) {			
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			String[] values = view.inputTwoParameter("RSS","Filter");			
+			if (values[0].equals("cancelByUser")) {	    		
 	    		return; //if cancel or close by user, return	
-	    	}
-			
-			if (values[0].equals("") || values[1].equals("")) {
-	    		
+	    	}			
+			if (values[0].equals("") || values[1].equals("")) {	    		
 				view.showInformation("A parameter is missing");
 	    		return; //if no url or filter, return	
-	    	}
-		
+	    	}		
 			getNewsRSSFilter(values[0], values[1]);
 			view.updateModelNews();		
-		} else if ( evento.getActionCommand().equals("SAVENEWSTOFILE") ) {
-			
+		} else if ( evento.getActionCommand().equals("SAVENEWSTOFILE") ) {			
 			String rootPath = (".\\datafiles");		
 			String filePath = view.fileSaveDialog(rootPath, "noProposal" );  			
 			saveNewsToAFile(filePath); 
-		} else if ( evento.getActionCommand().equals("SHOWMESSAGES") ) {
-			
+		} else if ( evento.getActionCommand().equals("SHOWMESSAGES") ) {			
 			view.showMessages();
-		} else if ( evento.getActionCommand().equals("SHOWMESSAGESFILTER") ) {
-			
+		} else if ( evento.getActionCommand().equals("SHOWMESSAGESFILTER") ) {			
 			view.showMessagesFilter();
 		} else if ( evento.getActionCommand().equals("SHOWCHATS") ) {
-			
+			if (checkConnection() == false ) return; //Check Connection to the internet
 			getChatList();
 			view.getChatList();	
 		} else if ( evento.getActionCommand().equals("SEARCHPUBLICCHATS") ) {
-			
-			inputForm = view.inputOneParameter("Chat name to search");
-			
-			if (inputForm == null || inputForm.equals("")) { //If cancel or no answer
-			
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			inputForm = view.inputOneParameter("Chat name to search");			
+			if (inputForm == null || inputForm.equals("")) { //If cancel or no answer			
 				return;
-			} 
-						
+			} 						
 			searchPublicGroups(inputForm);					
 			view.updateModelChatTelegram();
 		} else if ( evento.getActionCommand().equals("JOINTOCHAT") ) {
-				
-			inputForm = view.inputOneParameter("Chat Id");
-				
-			if (inputForm == null || inputForm.equals("")) { //If cancel or no answer
-					
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			inputForm = view.inputOneParameter("Chat Id");				
+			if (inputForm == null || inputForm.equals("")) { //If cancel or no answer					
 				return;
-			} 
-				
+			} 				
 			addUserToChat(inputForm);	
 			getChatList();
 			view.getChatList();
 		} else if ( evento.getActionCommand().equals("SEARCHMESSAGES") ) {
-			
-			String[] values = view.inputTwoParameter("Search string","ChatId");
-			
-			if (values[0].equals("cancelByUser")) {
-	    		
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			/*if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
+				System.out.println ("ERROR: no internet connection");
+				return;
+			}*/
+			String[] values = view.inputTwoParameter("Search string","ChatId");			
+			if (values[0].equals("cancelByUser")) {	    		
 	    		return; //if cancel or close by user, return	
-	    	}
-			
-			if (values[0].equals("") || values[1].equals("")) {
-	    		
+	    	}			
+			if (values[0].equals("") || values[1].equals("")) {	    		
 				view.showInformation("A parameter is missing");
 	    		return; //if no search string  or chatId, return	
-	    	}
-			
-			try {
-		    	
+	    	}			
+			try {		    	
 		        @SuppressWarnings("unused")
 				Long number = Long.parseLong(values[1]);
-		    } catch (NumberFormatException e) {
-		    	
+		    } catch (NumberFormatException e) {		    	
 		    	System.out.println ("WARNING : chatId incorrect");
 		        return ;
-		    }
-			
+		    }			
 			searchChatMessages(values[0], values[1]);
 			view.updateModelMessage();
-		} else if ( evento.getActionCommand().equals("SEARCHMESSAGESALLCHAT") ) {	
-					
-			getChatList(); //Needed for set the right name of the chat
-			
-			if (rightButtonValue.equals("")) { //Standard search
-				
+		} else if ( evento.getActionCommand().equals("SEARCHMESSAGESALLCHAT") ) {
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			getChatList(); //Needed for set the right name of the chat			
+			if (rightButtonValue.equals("")) { //Standard search				
 				inputForm = view.inputOneParameter("Search String");
-				if (inputForm == null || inputForm.equals("")) { //If cancel or no answer
-			
+				if (inputForm == null || inputForm.equals("")) { //If cancel or no answer			
 					return; 
-				}
-				
-				searchAllChatMessages(inputForm);
-				
+				}				
+				searchAllChatMessages(inputForm);				
 			} 
 			view.updateModelMessage();
-		} else if ( evento.getActionCommand().equals("SAVEMESSAGESTOFILE") ) {
-			
+		} else if ( evento.getActionCommand().equals("SAVEMESSAGESTOFILE") ) {			
 			String rootPath = (".\\datafiles");		
 			String filePath = view.fileSaveDialog(rootPath, "noProposal" );  			
 			saveMessagesToAFile(filePath); 
-		} else if ( evento.getActionCommand().equals("DELETEMESSAGES") ) {
-			
-			int value = view.askConfirmation("This operation can't be undone. Do you want to continue?","WARNING");
-			
-			if (value == 0) { //If Yes, overwrite
-				
+		} else if ( evento.getActionCommand().equals("DELETEMESSAGES") ) {			
+			int value = view.askConfirmation("This operation can't be undone. Do you want to continue?","WARNING");			
+			if (value == 0) { //If Yes, overwrite				
 				view.deleteAllMessageTelegram();
 				MessageTelegramHM.clearHM();
 			} else {
-
 				return;
 			}
-		} else if ( evento.getActionCommand().equals("DELETECHATS") ) {
-			
+		} else if ( evento.getActionCommand().equals("DELETECHATS") ) {			
 			view.deleteAllChats();
-		} else if ( evento.getActionCommand().equals("SHOWDATASETS") ) {
-			
+		} else if ( evento.getActionCommand().equals("SHOWDATASETS") ) {			
 			view.showDataSets();
-		} else if ( evento.getActionCommand().equals("SHOWDATASETSFILTERA") ) {
-			
+		} else if ( evento.getActionCommand().equals("SHOWDATASETSFILTERA") ) {			
 			view.showDataSetsFilterA();
-		} else if ( evento.getActionCommand().equals("SHOWDATASETSFILTERB") ) {
-			
+		} else if ( evento.getActionCommand().equals("SHOWDATASETSFILTERB") ) {			
 			view.showDataSetsFilterB();
 		} else if ( evento.getActionCommand().equals("CREATEDATASET") ) {
-			
+			if (checkConnection() == false ) return; //Check Connection to the internet
 			String[] values = {"","",""};
-			values = view.createDataSet();
-			
-			if (values[0].equals(".") && values[2].equals(".") && values[0].equals(".")) {
-				
+			values = view.createDataSet();			
+			if (values[0].equals(".") && values[2].equals(".") && values[0].equals(".")) {				
 				return;
-			}
-			
-			if (values[2].equals("A")) {
-				
+			}			
+			if (values[2].equals("A")) {				
 				createDataSetUser(values);			
-			} else {
-				
+			} else {				
 				CreateDataSetMessageTask createDataSet = new CreateDataSetMessageTask (values); //This task is execute in the background 
 				createDataSet.execute();
-			}
-			
+			}			
 			view.showDataSets();
-		} else if ( evento.getActionCommand().equals("DELETEDATASETS") ) {
-			
+		} else if ( evento.getActionCommand().equals("DELETEDATASETS") ) {			
 			view.deleteAllDataSet();
-		} else if ( evento.getActionCommand().equals("LOADNEWSFILE") ) {
-			
+		} else if ( evento.getActionCommand().equals("LOADNEWSFILE") ) {			
 			String rootPath = (".\\datafiles");
 			String filePath = view.fileOpenDialog(rootPath);
-
 			loadNewsfile(filePath);			
 			view.loadNewsFile();
-		} else if ( evento.getActionCommand().equals("LOADMESSAGESFILE") ) {
-			
-			getChatList();
-			
+		} else if ( evento.getActionCommand().equals("LOADMESSAGESFILE") ) {			
+			getChatList();			
 			String rootPath = (".\\datafiles");
 			String filePath = view.fileOpenDialog(rootPath);
-
 			loadMessagesFile(filePath);
-			view.loadMessagesFile();
-			
-		} else if ( evento.getActionCommand().equals("SHOWMESSAGESCONSOLE") ) {
-			
+			view.loadMessagesFile();			
+		} else if ( evento.getActionCommand().equals("SHOWMESSAGESCONSOLE") ) {			
 			view.startConsoleOutput();
-		} else if ( evento.getActionCommand().equals("STATISTICALDATA") ) {
-			
+		} else if ( evento.getActionCommand().equals("STATISTICALDATA") ) {			
 			view.startTotalFigures();
-		} else if ( evento.getActionCommand().equals("RSSLIST") ) {
-			
+		} else if ( evento.getActionCommand().equals("RSSLIST") ) {			
 			view.startRSS();
-		} else if ( evento.getActionCommand().equals("CHATSLIST") ) {
-			
+		} else if ( evento.getActionCommand().equals("CHATSLIST") ) {			
 			view.startChatList();
-		} else if ( evento.getActionCommand().equals("ABOUT") ) {
-			
+		} else if ( evento.getActionCommand().equals("ABOUT") ) {			
 			view.startHelp();
 		} else if ( evento.getActionCommand().equals("OPENBROWSER") ) {
-			
-			view.openBrowser();
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			//view.openBrowser();
+			ArrayList<String> newsSeleccion = new ArrayList<String>();
+			newsSeleccion = view.openBrowser();
+			openBrowser(newsSeleccion);
 		} else if ( evento.getActionCommand().equals("OPENTELEGRAMWEB") ) {
-			
-			view.openTelegramWeb();
-		} else if ( evento.getActionCommand().equals("SHOWCHATSFILTER") ) {
-			
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			String[] values = view.openTelegramWeb();
+			if (values == null) return;
+			if (values[0].equals("") && values[1].equals("")) { //if no chatId or msgId, return
+				return;
+			}
+			openTelegramWeb(values); 			
+		} else if ( evento.getActionCommand().equals("SHOWCHATSFILTER") ) {			
 			getChatList();
 			view.showChatsFilter();
-		} else if ( evento.getActionCommand().equals("MESSAGESBYTYPE") ) {
-			
+		} else if ( evento.getActionCommand().equals("MESSAGESBYTYPE") ) {			
 			view.startMessagesByType();
-		} else if ( evento.getActionCommand().equals("MESSAGESBYHOUR") ) {
-			
+		} else if ( evento.getActionCommand().equals("MESSAGESBYHOUR") ) {			
 			view.startMessagesByHour();
-		} else if ( evento.getActionCommand().equals("NEWSBYTYPE") ) {
-			
+		} else if ( evento.getActionCommand().equals("NEWSBYTYPE") ) {			
 			view.startNewsByType();
-		} else if ( evento.getActionCommand().equals("MESSAGESBYDAY") ) {
-			
+		} else if ( evento.getActionCommand().equals("MESSAGESBYDAY") ) {			
 			view.startMessagesByDay();
 		} else if ( evento.getActionCommand().equals("SEARCHMESSAGESALLCHATRB") ) {
-			
+			if (checkConnection() == false ) return; //Check Connection to the internet
 			rightButtonValue = view.getRightButtonValue();
-			getChatList(); //Needed for set the right name of the chat
-			
-			if (view.GetNewsMultipleRowSeleccionSize() <=1) {
-				
+			getChatList(); //Needed for set the right name of the chat			
+			if (view.GetNewsMultipleRowSeleccionSize() <=1) {				
 				searchAllChatMessages(rightButtonValue);
 				view.setRightButtonValue(); //Set value to "" for next action
-			} else {
-			
+			} else {			
 				ArrayList<String> list = view.GetNewsMultipleRowSeleccion();
 				SearchAllMessagesListTask searchList = new SearchAllMessagesListTask (list, queryManager); //This task is execute in the background 	  
-				searchList.execute();
-					
+				searchList.execute();					
 				view.setNewsMultipleRowSeleccion(); //clear array for next action
 				view.setRightButtonValue(); //Set value to "" for next action				
 			}
 		} else if ( evento.getActionCommand().equals("CREATEDATASETRB") ) {
-			
+			if (checkConnection() == false ) return; //Check Connection to the internet
 			String[] values = {"","",""};
-			values = view.createDataSetRB();
-			
-			if (values[0].equals(".") && values[2].equals(".") && values[0].equals(".")) {
-				
+			values = view.createDataSetRB();			
+			if (values[0].equals(".") && values[2].equals(".") && values[0].equals(".")) {				
 				return;
-			}
-			
-			if (values[2].equals("A")) {
-				
+			}			
+			if (values[2].equals("A")) {				
 				createDataSetUser(values);			
-			} else {
-				
+			} else {				
 				CreateDataSetMessageTask createDataSet = new CreateDataSetMessageTask (values); //This task is execute in the background 
 				createDataSet.execute();
-			}
-			
-			view.showDataSets();
-			
+			}			
+			view.showDataSets();			
 		} else if ( evento.getActionCommand().equals("JOINTOCHATRB") ) {
-			
-			rightButtonValue = view.getRightButtonValue();
-			
+			if (checkConnection() == false ) return; //Check Connection to the internet
+			rightButtonValue = view.getRightButtonValue();			
 			addUserToChat(rightButtonValue);
-			view.setRightButtonValue(); //Set value to "" for next action
-			
+			view.setRightButtonValue(); //Set value to "" for next action			
 			getChatList();
 			view.getChatList();
 		}		 		
@@ -353,6 +284,87 @@ public class Controller implements ActionListener {
 	/*--------------------------*/
 	/*    PRIVATE METHODS       */
 	/*--------------------------*/
+	
+	/**
+	 * Method for checking the connection to internet
+	 * @return the status of the connection
+	 */
+	private boolean checkConnection(){
+		
+		if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
+			System.out.println ("ERROR: no internet connection");
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	
+	/**
+	 * Method for opening the local browser 
+	 * @param newsArray (the url list)
+	 */
+	private void openBrowser(ArrayList<String> newsArray) {
+		
+		for (String url : newsArray) {
+	        
+			try {
+				
+				OpenBrowser.openBrowser(url);
+			} catch (IOException e) {
+				
+				//e.printStackTrace();
+			}
+		}	
+	}
+	
+	
+	/**
+	 * Method for getting the link for a message. If there is no info about the message the chat is open instead
+	 * @param values (the chatId and the messageId)
+	 */
+	private void openTelegramWeb(String[] values) {
+		
+		String chatId = "";
+		String messageId = "";
+		String link = "";
+		
+		try {
+			
+			chatId = values[0];
+			messageId = values[1];
+			
+		} catch (ArrayIndexOutOfBoundsException e) {
+			
+			//e.printStackTrace();
+		}
+		
+		link = queryManager.getMessageLink(chatId, messageId);
+		
+		if (link == null || link.equals("")) { //if no Telegram link, open the chat
+			try {
+				OpenTelegramDesktop.openTelegramDesktop(chatId.substring(4));
+				System.out.println ("INFO: message not found, opening chat");
+			} catch (IOException e) {
+				
+				//e.printStackTrace();
+			}
+			
+		} else {
+			
+			String[] linkArray = link.split("/");
+			int arraySize = linkArray.length;
+			
+			try {
+				//OpenBrowser.openBrowser(link);
+				OpenTelegramDesktop.openTelegramDesktop(chatId.substring(4),linkArray[arraySize-1]);
+			} catch (IOException e) {
+				
+				//e.printStackTrace();
+			}	
+		}		
+	}
+	
 	
 	/**
 	 * Method for searching  news on the internet
@@ -482,7 +494,7 @@ public class Controller implements ActionListener {
 	 * Method for creating a User Dataset
 	 * @param values
 	 */
-	void createDataSetUser(String[] values) {
+	private void createDataSetUser(String[] values) {
 		
 		if (values[0].startsWith("-")) {
 			
@@ -508,7 +520,7 @@ public class Controller implements ActionListener {
 	 * Method for creating a Message Dataset
 	 * @param values
 	 */
-	void createDataSetMessage(String[] values) {
+	private void createDataSetMessage(String[] values) {
 		
 		queryManager.getMessageInfo(values[0]);
 		ioManager.writeDataSetMessageJsonFile(values[0], values[1]);

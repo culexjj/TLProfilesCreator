@@ -30,4 +30,5 @@ public class OpenBrowser {
 			System.out.println("ERROR: URL format incorrect");
 		}	
 	}
+	
 }

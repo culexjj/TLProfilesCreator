@@ -1,7 +1,6 @@
 package checkNews;
 
 import java.awt.EventQueue;
-
 import checkNews.api.BatchMode;
 import checkNews.gui.Controller;
 import checkNews.gui.View;
@@ -12,13 +11,13 @@ import checkNews.telegram.ConnectionManager;
 import checkNews.telegram.QueryManager;
 
 
-
 /**
  * Main
  * @author Jose Javier Culebras
  * @version 1.0.
  * The "SocialNetworksProfileCreator" program is used for creating 'News broadcaster profiles' from Social Networks users (Telegram).
  */
+
 public class ProfileCreator {
 
 	public static void main(String[] args) {
@@ -102,7 +101,6 @@ public class ProfileCreator {
 						System.exit(0);
 						break;
 					}
-					
 					default:
 				 
 						System.out.println("WARNING: command not supported"); 

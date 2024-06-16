@@ -251,8 +251,7 @@ public class IOManager {
     		    messageToWrite.put("type", message.getType().toString());
     		    messageToWrite.put("urlQuery", message.getSource().toString());
     		        
-    		    listJson.add(messageToWrite);
-    		        
+    		    listJson.add(messageToWrite);   
     		}
     		     
     		BufferedWriter fileWriter = Files.newBufferedWriter(Paths.get(filePath));
@@ -280,64 +279,62 @@ public class IOManager {
 	 */
 	public void writeDataSetUserJsonFile(Long query, String path) {
 		
-	        	try {
+	   	try {
         			    		    
-	    		JsonObject dataSetToWrite = new JsonObject();
-	    		JsonArray listJson = new JsonArray();
-	    		DataSetUser dataSet = DataSetUserHM.getDataSenderId(query);
+	   		JsonObject dataSetToWrite = new JsonObject();
+	   		JsonArray listJson = new JsonArray();
+	   		DataSetUser dataSet = DataSetUserHM.getDataSenderId(query);
 	    			 			    
-	    		dataSetToWrite.put("senderId", dataSet.getUserTelegram().getSenderId());
-	    		dataSetToWrite.put("firstName", dataSet.getUserTelegram().getFirstName());
-	    		dataSetToWrite.put("lastName", dataSet.getUserTelegram().getLastName());
-	    		dataSetToWrite.put("userName", dataSet.getUserTelegram().getUserName());
-			    dataSetToWrite.put("isFake", dataSet.getUserTelegram().getIsFake());
-			    dataSetToWrite.put("isScam", dataSet.getUserTelegram().getIsScam());
-			    dataSetToWrite.put("isVerified", dataSet.getUserTelegram().getIsVerified());
-			    dataSetToWrite.put("isPremium", dataSet.getUserTelegram().getIsPremium());
+	   		dataSetToWrite.put("senderId", dataSet.getUserTelegram().getSenderId());
+	   		dataSetToWrite.put("firstName", dataSet.getUserTelegram().getFirstName());
+	   		dataSetToWrite.put("lastName", dataSet.getUserTelegram().getLastName());
+	   		dataSetToWrite.put("userName", dataSet.getUserTelegram().getUserName());
+		    dataSetToWrite.put("isFake", dataSet.getUserTelegram().getIsFake());
+		    dataSetToWrite.put("isScam", dataSet.getUserTelegram().getIsScam());
+		    dataSetToWrite.put("isVerified", dataSet.getUserTelegram().getIsVerified());
+		    dataSetToWrite.put("isPremium", dataSet.getUserTelegram().getIsPremium());
 	    		        
-	    		ArrayList<MessageTelegram> listOfMessages = dataSet.getListOfMessages();
+	   		ArrayList<MessageTelegram> listOfMessages = dataSet.getListOfMessages();
 	    		       
-	    		Iterator<MessageTelegram> arrayIterator = listOfMessages.iterator();
-	    		MessageTelegram message = new MessageTelegram();
+	   		Iterator<MessageTelegram> arrayIterator = listOfMessages.iterator();
+	   		MessageTelegram message = new MessageTelegram();
 	        		    
-	        	while (arrayIterator.hasNext()) { //Iterate through file and add DataSet to HashMap
+	       	while (arrayIterator.hasNext()) { //Iterate through file and add DataSet to HashMap
 	        			
-	        		message = arrayIterator.next();
-	        		JsonObject messageToWrite = new JsonObject();	
+	       		message = arrayIterator.next();
+	       		JsonObject messageToWrite = new JsonObject();	
 	        		    	
-	        		messageToWrite.put("date", message.getDate());
-	        		messageToWrite.put("messageId", message.getMessageId());
-	        		messageToWrite.put("senderId", message.getSenderId());
-	        		messageToWrite.put("chatId", message.getChatId());
-	        		messageToWrite.put("content", message.getContent());       
-	        		messageToWrite.put("type", message.getType().toString());
-	        			messageToWrite.put("urlQuery", message.getSource().toString());
+	       		messageToWrite.put("date", message.getDate());
+	       		messageToWrite.put("messageId", message.getMessageId());
+	       		messageToWrite.put("senderId", message.getSenderId());
+	       		messageToWrite.put("chatId", message.getChatId());
+	       		messageToWrite.put("content", message.getContent());       
+	       		messageToWrite.put("type", message.getType().toString());
+	       			messageToWrite.put("urlQuery", message.getSource().toString());
 	        		    	
-	        		listJson.add(messageToWrite);
-	        	}
+	       		listJson.add(messageToWrite);
+	       	}
 	    				
-	        	dataSetToWrite.put("messages", listJson);
+	       	dataSetToWrite.put("messages", listJson);
+	   		
+	       	BufferedWriter fileWriter = Files.newBufferedWriter(Paths.get(path));
+	   		Jsoner.serialize(dataSetToWrite, fileWriter); //Write JSON array to file	
+	   		fileWriter.close(); 
 	    		
-	        	BufferedWriter fileWriter = Files.newBufferedWriter(Paths.get(path));
-	    		Jsoner.serialize(dataSetToWrite, fileWriter); //Write JSON array to file	
-	    		fileWriter.close(); 
-	    		
-    		} catch (IOException e) {
+    	} catch (IOException e) {
 				
-    		    System.out.println("ERROR: file writing error");	 
-    		    return;
-    		} catch (Exception e) 	{
+    	    System.out.println("ERROR: file writing error");	 
+    	    return;
+    	} catch (Exception e) 	{
     			
-    			System.out.println("WARNING: no data available");  
-    			return;
-    		}
+    		System.out.println("WARNING: no data available");  
+    		return;
+    	}
 	        
-	        System.out.println("INFO: dataset saved" );
-	        	
-		}
+	       System.out.println("INFO: dataset saved" );	
+	}
 	
 	
-		
 	/**
 	 * 
 	 * Method for writing a file of DataSetMessage. 
@@ -345,62 +342,61 @@ public class IOManager {
 	 * @param pathFile
 	 */
 	public void writeDataSetMessageJsonFile(String query, String pathFile) {
-			
-        	try {
+		
+        try {
         			    		    
-        		JsonObject dataSetToWrite = new JsonObject();
-    		    JsonArray listJson = new JsonArray();
+        	JsonObject dataSetToWrite = new JsonObject();
+    	    JsonArray listJson = new JsonArray();
     		    
-    		    DataSetMessage dataSet = DataSetMessageHM.getDataMessage(query.toLowerCase());
+    	    DataSetMessage dataSet = DataSetMessageHM.getDataMessage(query.toLowerCase());
     		    
-    		    dataSetToWrite.put("message", dataSet.getMessage());    							    		        
-    		    ArrayList<UserTelegram> listOfUsers = dataSet.getListOfUsers();
+    	    dataSetToWrite.put("message", dataSet.getMessage());    							    		        
+    	    ArrayList<UserTelegram> listOfUsers = dataSet.getListOfUsers();
  
-    		    if (listOfUsers.size() == 0) {
+    	    if (listOfUsers.size() == 0) {
     		    	
-    		    	System.out.println("WARNING: no data available");
-        			return;
-    		    }
+    	    	System.out.println("WARNING: no data available");
+        		return;
+    	    }
     		    
-    		    Iterator<UserTelegram> arrayIterator = listOfUsers.iterator();
+    	    Iterator<UserTelegram> arrayIterator = listOfUsers.iterator();
     		    
-    	
-    		    UserTelegram user = new UserTelegram();
+    	    UserTelegram user = new UserTelegram();
         		    
-        		while (arrayIterator.hasNext()) { //Iterate through HashMap and add DataSet to file
+        	while (arrayIterator.hasNext()) { //Iterate through HashMap and add DataSet to file
         			
-        		  	user = arrayIterator.next();	        		    	
-        		    JsonObject messageToWrite = new JsonObject();	
+        	  	user = arrayIterator.next();	        		    	
+        	    JsonObject messageToWrite = new JsonObject();	
         		    	
-        		    messageToWrite.put("senderId", user.getSenderId());
-        		    messageToWrite.put("firstName", user.getFirstName());
-        		    messageToWrite.put("lastName", user.getLastName());
-        		    messageToWrite.put("userName", user.getUserName());
-        		    messageToWrite.put("fake", user.getIsFake());       
-        		    messageToWrite.put("scam", user.getIsScam());
-        		    messageToWrite.put("verified", user.getIsVerified());       
-        		    messageToWrite.put("premium", user.getIsPremium());
+        	    messageToWrite.put("senderId", user.getSenderId());
+        	    messageToWrite.put("firstName", user.getFirstName());
+        	    messageToWrite.put("lastName", user.getLastName());
+        	    messageToWrite.put("userName", user.getUserName());
+        	    messageToWrite.put("fake", user.getIsFake());       
+        	    messageToWrite.put("scam", user.getIsScam());
+        	    messageToWrite.put("verified", user.getIsVerified());       
+        	    messageToWrite.put("premium", user.getIsPremium());
         		    	
-        		    listJson.add(messageToWrite);
-        		}
+        	    listJson.add(messageToWrite);
+        	}
     				
-        		dataSetToWrite.put("users", listJson);
+        	dataSetToWrite.put("users", listJson);
     		    
-        		BufferedWriter fileWriter = Files.newBufferedWriter(Paths.get(pathFile));
-    		    Jsoner.serialize(dataSetToWrite, fileWriter); //Write JSON array to file	
-    		    fileWriter.close(); 
+        	BufferedWriter fileWriter = Files.newBufferedWriter(Paths.get(pathFile));
+    	    Jsoner.serialize(dataSetToWrite, fileWriter); //Write JSON array to file	
+    	    fileWriter.close(); 
 	    		
-    		} catch (IOException e) {
+    	} catch (IOException e) {
 				
-    		    System.out.println("ERROR: file writing error");	  
-    		    return;
-    		} catch (Exception e) 	{
+    	    System.out.println("ERROR: file writing error");	  
+    	    return;
+    	} catch (Exception e) 	{
     			
-    			System.out.println("WARNING: no data available");
-    			return;
-    		}
+    		System.out.println("WARNING: no data available");
+    		return;
+   		}
         	
-        	System.out.println("INFO: dataset saved" );
-		}
+       	System.out.println("INFO: dataset saved" );
+	}
 			
 }

@@ -65,7 +65,6 @@ public class DataSetUserHM {
 	public static int getNumberOfElements() {
 		
 		return hashMapDataSet.size();
-		
 	}
 	
 	/**
@@ -121,17 +120,14 @@ public class DataSetUserHM {
 		    	if (datSetUserRecord.getUserTelegram().getSenderId().equals(query)) {
 		    		
 		    		listOfDataSetUser.add(datSetUserRecord);
-		    	}
-		    	
-		    	
+		    	}		    	
 		    }
 		} catch (NullPointerException e) {
 			
 			System.out.println("WARNING: no dataset found");
 		}
 				
-		return listOfDataSetUser;
-		
+		return listOfDataSetUser; 
 	}
 	
 }

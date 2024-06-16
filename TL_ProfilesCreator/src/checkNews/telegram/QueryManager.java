@@ -21,7 +21,7 @@ import checkNews.data.MessageTelegram;
 import checkNews.data.MessageTelegramHM;
 import checkNews.data.MessageType;
 import checkNews.data.UserTelegram;
-import checkNews.support.CheckInternetConnection;
+//import checkNews.support.CheckInternetConnection;
 import checkNews.telegram.TdApi.Message;
 import checkNews.telegram.TdApi.User;
 import checkNews.telegram.Telegram.OrderedChat;
@@ -81,7 +81,7 @@ public final  class QueryManager {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		
@@ -93,12 +93,6 @@ public final  class QueryManager {
 			formatMessages(list, query);
 		}
 		catch(NullPointerException e) {
-			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
-				
-				System.out.println ("ERROR: no internet connection");
-				return;
-			}
 			
 			System.out.println("WARNING: not reply");
 			return;
@@ -126,7 +120,7 @@ public final  class QueryManager {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 					
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		
@@ -139,12 +133,6 @@ public final  class QueryManager {
 		}
 		catch(NullPointerException e) {
 			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
-				
-				System.out.println ("ERROR: no internet connection");
-				return;
-			}
-
 			System.out.println("WARNING: not reply");
 			return;
 		}
@@ -208,7 +196,7 @@ public final  class QueryManager {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		
@@ -219,13 +207,7 @@ public final  class QueryManager {
 			
 		}
 		catch(NullPointerException e) {
-			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
 				
-				System.out.println ("ERROR: no internet connection");
-				return;
-			}
-			
 			System.out.println("WARNING: not reply");
 			return;
 		}
@@ -238,12 +220,6 @@ public final  class QueryManager {
 		    }
 		} 
 		catch(NullPointerException e) {
-			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
-				
-				System.out.println ("ERROR: no internet connection");
-				return;
-			}
 			
 			System.out.println("WARNING: not reply");
 			return;
@@ -272,26 +248,18 @@ public final  class QueryManager {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		
 		if (Telegram.getError()) { //If 0, there is an error with the senderId
-			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
-				
-				System.out.println ("ERROR: no internet connection");
-				return;
-			}
 			
 			System.out.println("WARNING: chatId incorrect");
 			Telegram.setError(false); //Set control to false in order to get it ready for next query
 			return;
 		}
 		
-			
 		Telegram.setControl(false); //Set control to false in order to get it ready for next query
-		
 	}
 	
 	
@@ -317,22 +285,13 @@ public final  class QueryManager {
 			DataSetUserHM.add(senderId, dataSet);
 		
 		} catch (NullPointerException e) {
-			
-			if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
-				
-				System.out.println ("ERROR: no internet connection");
-				return;
-			}
-			
+						
 			System.out.println("WARNING: senderId incorrect");
 			return;
 		}
 	}
 	
 
-	
-
-	
 	/**
 	 * Method for getting information from a message
 	 * @param query (the url/keyword)
@@ -372,21 +331,15 @@ public final  class QueryManager {
 	
 	/**
 	 * Method for multiple searching Messages
-	 * @param list (the list of url to search)
+	 * @param list (the list of URL to search)
 	 */
 	public void searchAllMessagesList(ArrayList<String> list) {
-		
-		if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
-			
-			System.out.println ("ERROR: no internet connection");
-			return;
-		}
-		
+				
 		ArrayList<String> queryList = list;
 		
 		if (queryList.size() == 0) {
 			
-			System.out.println("WARNING: check selection "); 
+			System.out.println("WARNING: check selection"); 
 			return;
 		}
 		
@@ -397,6 +350,49 @@ public final  class QueryManager {
 				searchAllChatMessages(query);
 			}
 		}	
+	}
+	
+	
+	/**
+	 * Method for getting the URL for opening a message on Telegram web
+	 * @param chatId
+	 * @param messageId
+	 * @return the URL
+	 */
+	public String getMessageLink (String chatId, String messageId) {
+		
+		Long chat = Long.valueOf(chatId).longValue();
+		Long message = Long.valueOf(messageId).longValue();
+		String link = null;
+		int time = 0; 
+				
+		Telegram.getMessageLink(chat, message); //Asynchronous query
+			
+		while (!(Telegram.getControl()) && (time < 51)) { //if after  5 seconds there is not reply, we exit
+			
+			try {
+					
+				time ++;
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+					
+				//e.printStackTrace();
+			}
+		}
+		
+		Telegram.setControl(false); //volvemos a establer el valor a falso para la siguiente query
+		
+		try {
+					
+			link = Telegram.getLink();
+			Telegram.setLink(); //volvemos a establer el valor a falso para la siguiente query
+		} catch(NullPointerException e) {
+			
+			System.out.println("WARNING: not reply");
+			return "";
+		}
+		
+		return link;
 	}
 	
 	
@@ -423,7 +419,7 @@ public final  class QueryManager {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		
@@ -478,7 +474,7 @@ public final  class QueryManager {
 		numberOfMessages = MessageTelegramHM.getNumberOfElements();
 
 		/* Iterate the array */
-		for (int i = 0; i < sizeOfMessagesList ; i++) {            
+		for (int i = 0; i < sizeOfMessagesList ; i++) {    
 			
 			messageId = list[i].id;
 					
@@ -506,64 +502,64 @@ public final  class QueryManager {
 			int constructor = list[i].content.getConstructor(); //the constructor number of the object is used for setting the right action
 						
 			try {
-			if ( constructor == -448050478)  {
+				if ( constructor == -448050478)  {
 				
-				type = MessageType.PICTURE;
-				if (tokensContent.length > 25) {
-					if (tokensContent[25].equals("W") || tokensContent[25].equals("w") || tokensContent[25].equals("y")){
+					type = MessageType.PICTURE;
+					if (tokensContent.length > 25) {
+						if (tokensContent[25].equals("W") || tokensContent[25].equals("w") || tokensContent[25].equals("y")){
 						
-						content =tokensContent[33]; 
-					} else {
-						
-						content =tokensContent[25];
-					}													
-				} else {
-						if (tokensContent[9].equals("m") ||tokensContent[9].equals("x") ) {
-							content =tokensContent[17];
+							content =tokensContent[33]; 
 						} else {
-							content =tokensContent[9];
-						}	
-				}
+						
+							content =tokensContent[25];
+						}													
+					} else {
+							if (tokensContent[9].equals("m") ||tokensContent[9].equals("x") ) {
+								content =tokensContent[17];
+							} else {
+								content =tokensContent[9];
+							}	
+					}
 				
 					MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query);
 					MessageTelegramHM.add(messageId, message);
 					continue;
-			} else if  ( constructor == -1053465942)  {
+				} else if  ( constructor == -1053465942)  {
 												
-				type = MessageType.TEXT;
-				content = tokensContent[1];
-				MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query);
-				MessageTelegramHM.add(messageId, message);
-				continue;
-			} else if  ( constructor == -1237516229)  {
-			
-				type = MessageType.VIDEO;
-				if (tokensContent[17].equals("")) {
-				
+					type = MessageType.TEXT;
 					content = tokensContent[1];
-				} else {
-				
-					content = tokensContent[17];
-				}
-				
-				MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query);
-				MessageTelegramHM.add(messageId, message);
-				continue;
-			} else if ( constructor == 596945783) {
-												
-				type = MessageType.DEFAULT;
-				content = tokensContent[17];
-				MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query );
-				MessageTelegramHM.add(messageId, message);
-				continue;
-			} else {
+					MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query);
+					MessageTelegramHM.add(messageId, message);
+					continue;
+				} else if  ( constructor == -1237516229)  {
 			
-				type = MessageType.DEFAULT;
-				content = tokensContent[1] ; 
-				MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query);
-				MessageTelegramHM.add(messageId, message);
-			}
-		}	 catch (ArrayIndexOutOfBoundsException e) {
+					type = MessageType.VIDEO;
+					if (tokensContent[17].equals("")) {
+					
+						content = tokensContent[1];
+					} else {
+				
+						content = tokensContent[17];
+					}
+				
+					MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query);
+					MessageTelegramHM.add(messageId, message);
+					continue;
+				} else if ( constructor == 596945783) {
+												
+					type = MessageType.DEFAULT;
+					content = tokensContent[17];
+					MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query );
+					MessageTelegramHM.add(messageId, message);
+					continue;
+				} else {
+			
+					type = MessageType.DEFAULT;
+					content = tokensContent[1] ; 
+					MessageTelegram message = new MessageTelegram(messageId, senderId, date, chatId, content, type, query);
+					MessageTelegramHM.add(messageId, message);
+				}
+			} catch (ArrayIndexOutOfBoundsException e) {
 			
 			//System.out.println ("ERROR PARSING ");
 			//System.out.println ("Constructor : " + constructor);
@@ -591,7 +587,7 @@ public final  class QueryManager {
 				time ++;				
 				Thread.sleep(50); // 0,05 seconds
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	
