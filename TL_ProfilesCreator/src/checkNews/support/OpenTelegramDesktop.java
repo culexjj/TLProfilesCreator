@@ -28,7 +28,12 @@ public class OpenTelegramDesktop {
 		}
 	}
 	
-	
+	/**
+	 * Method for opening the Telegram msg passed like parameter
+	 * @param chatId (to be opened)
+	 * * @param messageId (to be opened)
+	 * @throws IOException
+	 */
 	@SuppressWarnings("deprecation")
 	public static void openTelegramDesktop(String chatId, String messageId) throws IOException{
 		

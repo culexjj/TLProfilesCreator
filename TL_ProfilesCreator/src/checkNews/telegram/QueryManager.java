@@ -303,7 +303,7 @@ public final  class QueryManager {
 		
 		if (listOfMessages.size() == 0) {
 	    	
-			System.out.println("WARNING: message incorrect");
+			System.out.println("WARNING: message incorrect...");
 			return;
 	    }
 		

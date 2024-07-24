@@ -128,10 +128,6 @@ public class Controller implements ActionListener {
 			view.getChatList();
 		} else if ( evento.getActionCommand().equals("SEARCHMESSAGES") ) {
 			if (checkConnection() == false ) return; //Check Connection to the internet
-			/*if (CheckInternetConnection.checkConnection() == false ) { //Check Connection to the internet
-				System.out.println ("ERROR: no internet connection");
-				return;
-			}*/
 			String[] values = view.inputTwoParameter("Search string","ChatId");			
 			if (values[0].equals("cancelByUser")) {	    		
 	    		return; //if cancel or close by user, return	
@@ -219,7 +215,6 @@ public class Controller implements ActionListener {
 			view.startHelp();
 		} else if ( evento.getActionCommand().equals("OPENBROWSER") ) {
 			if (checkConnection() == false ) return; //Check Connection to the internet
-			//view.openBrowser();
 			ArrayList<String> newsSeleccion = new ArrayList<String>();
 			newsSeleccion = view.openBrowser();
 			openBrowser(newsSeleccion);
@@ -256,6 +251,7 @@ public class Controller implements ActionListener {
 				view.setNewsMultipleRowSeleccion(); //clear array for next action
 				view.setRightButtonValue(); //Set value to "" for next action				
 			}
+			view.updateModelMessage();
 		} else if ( evento.getActionCommand().equals("CREATEDATASETRB") ) {
 			if (checkConnection() == false ) return; //Check Connection to the internet
 			String[] values = {"","",""};

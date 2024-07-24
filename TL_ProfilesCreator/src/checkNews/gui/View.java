@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-//import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -63,7 +62,6 @@ import checkNews.support.IOManager;
 import checkNews.support.gui.BarChart;
 import checkNews.support.gui.HeaderTable;
 import checkNews.support.gui.LineChart;
-//import checkNews.support.OpenBrowser;
 import checkNews.support.gui.PieChart;
 import checkNews.support.gui.SetOutputStream;
 
@@ -1311,40 +1309,8 @@ public class View {
 	
 	
 	/**
-	 * Method for opening a browser  a file of Messages. The value of variable rightButtonValue is used for setting the url
+	 * Method for getting a list of URL
 	 */
-	/*void openBrowserOld() {
-			
-		if (NewsMultipleRowSeleccion.size() <=1) {
-			
-			try {
-				
-				OpenBrowser.openBrowser(rightButtonValue);
-			} catch (IOException e) {
-				
-				//e.printStackTrace();
-			}
-			
-			rightButtonValue = ""; //Set value to "" for next action
-		} else {
-			
-			for (String query : NewsMultipleRowSeleccion) {
-		        
-				try {
-					
-					OpenBrowser.openBrowser(query);
-				} catch (IOException e) {
-					
-					//e.printStackTrace();
-				}
-			}	
-			
-			NewsMultipleRowSeleccion = new ArrayList<String>(); //clear array for next action
-			rightButtonValue = ""; //Set value to "" for next action			
-		}
-	}*/
-	
-	
 	ArrayList<String> openBrowser() {
 		
 		ArrayList<String> newsRowSeleccion = new ArrayList<String>();

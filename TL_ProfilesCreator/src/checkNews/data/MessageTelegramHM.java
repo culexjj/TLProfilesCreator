@@ -73,7 +73,7 @@ public class MessageTelegramHM {
 		
 		ArrayList<MessageTelegram> listOfMessages = new ArrayList<MessageTelegram>();
 		MessageTelegram messageTelegramRec = new MessageTelegram();
-		query = query.toLowerCase();
+		//query = query.toLowerCase();
 		String[] itemsQuery = query.trim().split("\\s+"); //remove white spaces at the begining of the string and split on simple string words
 		int founds = 0;//Number of words which match with the filter
 		
