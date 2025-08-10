@@ -1,10 +1,12 @@
 package checkNews.search;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.net.URLDecoder;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,11 +17,26 @@ import checkNews.data.NewsHM;
 import checkNews.data.NewsType;
 //import checkNews.support.CheckInternetConnection;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+	
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+	
+	import java.time.Duration;
+	import java.util.List;
+
+
 /**
  * Class for fetching News using RSS sources or standard google searches
- * requires org.jsoup en module-info.java  and  jsoup-1.16.1.jar.  Set on 'properties-java build path-libraries-module path'
+ * requires org.jsoup in module-info.java  and  jsoup-1.16.1.jar.  Set on 'properties-java build path-libraries-module path'
+ * Since July'25 Selenium & Duck Duck go is used for searching news (https://rayobyte.com/blog/google-update-2025/?utm_source=chatgpt.com)
+ * requires org.seleniumhq in module-info.java and selenium*.jar + ChromeDriver.exe.
  * @author Jose Javier Culebras
- * @version 1.0 
+ * @version 1.1 
  * 
  */
 
@@ -51,11 +68,14 @@ public class InternetSearch {
 	/*--------------------------*/
 	
 	/**
-	 * Method for doing a Google search, output fixed  to 25 results
+	 * In Spring 2025 Google has changed the structure of its search results, and is actively reinforcing measures against automated scraping
+	 * (such as blocking IPs, displaying captchas, or dynamically changing HTML with JavaScript), making tools like Jsoup (which doesn't run JavaScript)
+	 * no longer work for this purpose. Method for doing a Google search, output fixed  to 25 results
 	 * A list of different listAgents is used for avoid issues with Google search engine
 	 * @param query (the string to look for)
+	 * @deprecated
 	 */
-	public void searchNewsByTitle(String query) {
+	public void searchNewsByTitleDeprecated(String query) {
 		
 		Document documentHTML = null; 
 		NewsType type = NewsType.INTERNET;
@@ -111,6 +131,75 @@ public class InternetSearch {
 		System.out.println("INFO: " + (numberOfNewsNew-numberOfNews) + " news found" );
 	}
 	
+	
+	
+	/**
+	 * Method for doing a search using DuckDuckGo
+	 * @param query (the string to look for)
+	 */
+	public void searchNewsByTitle(String query) {
+
+        NewsType type = NewsType.INTERNET;
+        String description = "";
+        numberOfNews = NewsHM.getNumberOfElements();
+
+        /* WebDriver configuration */
+        //System.setProperty("webdriver.chrome.driver", "D:\\TFG\\CheckNews\\libraries\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", new File("chromedriver/chromedriver.exe").getAbsolutePath());
+                
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless=new");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1200,800");
+        //options.addArguments("--lang=es");
+        options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.169 Safari/537.36");
+
+        WebDriver driver = new ChromeDriver(options); //Driver Object
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); //Waiting for results till 10 seconds
+
+        try {
+        	for (int offset = 0; offset < 30; offset += 10) { //loop for getting +10 results
+        	    String url = "https://html.duckduckgo.com/html/?q=" + query.replace(" ", "+") + "&s=" + offset;
+        	    driver.get(url);
+            
+	            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".result__title")));
+	
+	            List<WebElement> results = driver.findElements(By.cssSelector(".result__title"));
+	            for (WebElement result : results) {
+	                try {
+	                    WebElement link = result.findElement(By.tagName("a"));
+	                    String title = link.getText();
+	                    String href = link.getAttribute("href");
+	                    
+	                    //* URL decoding /
+	                    String decodedUrl = href;
+	                    if (href.contains("uddg=")) {
+	                        int start = href.indexOf("uddg=") + 5;
+	                        int end = href.indexOf("&", start);
+	                        if (end == -1) end = href.length();
+	                        String encoded = href.substring(start, end);
+	                        decodedUrl = URLDecoder.decode(encoded, StandardCharsets.UTF_8);
+	                    }
+	                                     
+	                    News aNew = new News(title, decodedUrl, description, type);
+	                    NewsHM.add(decodedUrl.toLowerCase(), aNew);
+	
+	                } catch (Exception e) {
+	                    
+	                }
+	            }
+        	}
+
+        } catch (Exception e) {
+            System.out.println("WARNING: error searching news");
+            e.printStackTrace();
+        } finally {
+            driver.quit();
+        }
+
+        numberOfNewsNew = NewsHM.getNumberOfElements();
+        System.out.println("INFO: " + (numberOfNewsNew - numberOfNews) + " news found"); 
+    }	
 	
 	
 	/**
