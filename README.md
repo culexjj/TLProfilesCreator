@@ -45,7 +45,7 @@ It is a Telegram client available to developers with the purpose of assisting in
 # Installation Manual
 
 Description
-The file TL_ProfilesCreator3.1.zip contains everything needed to use the application on Windows platforms. DOWNLOAD HERE --> https://1drv.ms/u/c/ea60f3af0060ca70/EagjYC-FQMRGnx70p8rjfNABuuXzdSoGYA5eYnxL0kqn7w?e=CYqvpj
+The file TL_ProfilesCreator3.1.zip contains everything needed to use the application on Windows platforms. https://1drv.ms/u/c/ea60f3af0060ca70/EagjYC-FQMRGnx70p8rjfNABuuXzdSoGYA5eYnxL0kqn7w?e=CYqvpj
 
 Below is an explanation of the contents:
 
