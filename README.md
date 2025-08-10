@@ -49,15 +49,15 @@ The file TL_ProfilesCreator3.1.zip contains everything needed to use the applica
 
 Below is an explanation of the contents:
 
-datafiles: default folder for exporting NEWS- and MESSAGES-type files.
-dataset: default folder for exporting dataset-type files.
-image: initial screen image.
-support: libraries, documentation, and support software.
+Datafiles: default folder for exporting NEWS- and MESSAGES-type files.
+Dataset: default folder for exporting dataset-type files.
+Image: initial screen image.
+Support: libraries, documentation, and support software.
 dll: libraries required for the application to function.
-documentation: user manual.
-jdk: installation package jdk-20_windows-x64.
+Documentation: user manual.
+JDK: installation package jdk-20_windows-x64.
 Telegram Desktop: installation package tsetup-x64.5.0.1.
-tools: Dependencies v1.11.1.0. Software for verifying dependencies.
+Tools: Dependencies v1.11.1.0. Software for verifying dependencies.
 Chromedriver: chromedriver.exe file.
 TLProfilesCreator_3.1.jar: application. https://1drv.ms/u/c/ea60f3af0060ca70/EagjYC-FQMRGnx70p8rjfNABuuXzdSoGYA5eYnxL0kqn7w?e=CYqvpj
 startGUI.cmd: command file to run the application in graphical mode.
