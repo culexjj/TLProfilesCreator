@@ -9,3 +9,32 @@ In this context, information flow analysis tools contribute to an efficient anal
 The ambition of this thesis is the development of a software tool that allows creating sets of data, or datasets, of users’ profiles who share news on the Telegram social network. Specifically, the application allows users to retrieve news from the Internet, search for profiles of users who are sharing them and generate datasets by collecting information about these users. The standard JSON structured data format is used to create files for both the datasets and the rest of the data managed by the application: Internet news and Telegram messages.
 The results obtained during the functional tests of the application meet the main objective of this work: to generate datasets of profiles from users who share news, and with the specific objec-tives: to retrieve news from the Internet search engines or from RSS services, to search for mes-sages in Telegram chats whose contents are news URL and produce dataset using JSON’ stand-ard.  On the other hand, it is important to highlight that Telegram's limitations about retrieving information impose an external restriction on the system that limits message recovery capabilities.
 
+# Objectives
+
+The general objective of this work is the design and development of a software tool capable of: retrieving news from the Internet, identifying the retrieved news from its URL or headline, then searching for those news items among the messages in the available Telegram chats, and obtaining public data from the users who shared them. With the information retrieved, datasets will be created using a standard structured data format.
+
+# System Description
+
+The developed desktop application allows retrieving news from the Internet in different ways, for example, from RSS feeds or by searching directly for the news title or URL in the GOOGLE search engine.
+The Internet search retrieves the news headline, the URL, and, in the case of RSS feeds, the news synopsis. This information is displayed in the application in a tabular format, and the application records the following attributes: date when the news was retrieved, title, URL, synopsis, and source (Internet, RSS).
+
+The application allows searching for messages in Telegram chats, of which the user is a member, using the URL or headline of the retrieved news. Message searches in Telegram are displayed in the application in a tabular format, and the application records the following attributes: message date and time, senderId, messageId, chatId, urlQuery, message content, and message type (text, photo, video). In addition, it is possible to view the chats of which the user is a member, search for public chats, and join them.
+
+The different tabular views for displaying information are initially sorted in reverse chronological order, and the system also allows filtering data and sorting it by each table attribute.
+
+The application offers two operating modes: an API for batch task execution, and a graphical user interface. Data persistence for the different data types—news, messages, and datasets—is handled using structured JSON text files.
+
+Additionally, the system allows:
+
+Viewing the retrieved news in the system’s default web browser.
+Viewing Telegram messages, if the Telegram Desktop client is installed on the host system.
+Viewing statistical information.
+
+With the information retrieved when performing message searches on Telegram, two types of datasets can be created:
+
+User-type dataset: composed of the user’s data plus a list of all messages associated with that user. Figure 2 shows a ‘compact’ view of a user-type dataset.
+Message-type dataset: composed of a message, the URL or headline of the news, and a list of data of all users who have shared it. Figure 3 shows a ‘compact’ view of a message-type dataset.
+
+# TDLib: https://github.com/tdlib/td
+It is a Telegram client available to developers with the purpose of assisting in the creation of custom applications that use the Telegram platform. The client is available on GitHub and is responsible for managing network connections, encryption, and local data storage.
+
