@@ -42,3 +42,44 @@ Message-type dataset: composed of a message, the URL or headline of the news, an
 # TDLib: https://github.com/tdlib/td
 It is a Telegram client available to developers with the purpose of assisting in the creation of custom applications that use the Telegram platform. The client is available on GitHub and is responsible for managing network connections, encryption, and local data storage.
 
+# Installation Manual
+
+Description
+The file TL_ProfilesCreator3.1.zip contains everything needed to use the application on Windows platforms.
+
+Below is an explanation of the contents:
+
+datafiles: default folder for exporting NEWS- and MESSAGES-type files.
+dataset: default folder for exporting dataset-type files.
+image: initial screen image.
+support: libraries, documentation, and support software.
+dll: libraries required for the application to function.
+documentation: user manual.
+jdk: installation package jdk-20_windows-x64.
+Telegram Desktop: installation package tsetup-x64.5.0.1.
+tools: Dependencies v1.11.1.0. Software for verifying dependencies.
+Chromedriver: chromedriver.exe file.
+TLProfilesCreator_3.1.jar: application.
+startGUI.cmd: command file to run the application in graphical mode.
+
+Requirements
+The following elements are required for the application to function correctly:
+
+Java JDK 20 or higher.
+tdjni.dll and dependencies.
+
+New dependencies (July 2025)
+Due to changes introduced by Google in its search engine, the previous JSoup-based system has been complemented with a dynamic one using Selenium. For proper operation, it is necessary to have:
+
+ChromeDriver (compatible with the version of Google Chrome installed on the system).
+Google Chrome (updated browser recommended).
+Selenium WebDriver (included in the project libraries).
+
+The following elements are optional:
+
+Telegram Desktop.
+
+Running the application
+To start the application, run the following command:
+
+java -jar TLProfilesCreator.jar [<options>] or execute startGUI.cmd.
