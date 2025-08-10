@@ -59,7 +59,7 @@ jdk: installation package jdk-20_windows-x64.
 Telegram Desktop: installation package tsetup-x64.5.0.1.
 tools: Dependencies v1.11.1.0. Software for verifying dependencies.
 Chromedriver: chromedriver.exe file.
-TLProfilesCreator_3.1.jar: application.
+TLProfilesCreator_3.1.jar: application. https://1drv.ms/u/c/ea60f3af0060ca70/EagjYC-FQMRGnx70p8rjfNABuuXzdSoGYA5eYnxL0kqn7w?e=CYqvpj
 startGUI.cmd: command file to run the application in graphical mode.
 
 Requirements
